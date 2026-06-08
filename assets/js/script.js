@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             navbar.classList.remove('scrolled');
         }
-    });
+    }, { passive: true });
 
     // Mobile Menu Toggle
     const hamburger = document.querySelector('.hamburger');
@@ -252,7 +252,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const project = projectsData[projectId];
         if (!project) return;
 
-        // Rellenar contenido
+        // Rellenar contenido con WebP si disponible
+        const webpSrc = project.img.replace('.png', '.webp');
+        const modalImgWebp = document.getElementById('modal-project-img-webp');
+        if (modalImgWebp) modalImgWebp.srcset = webpSrc;
         modalImg.src = project.img;
         modalImg.alt = project.title;
         modalBadge.textContent = project.category;
