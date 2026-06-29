@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <link rel="icon" type="image/png" href="../assets/img/logo/logo_pestana.png">
+    <script>
+        (function () {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark-theme');
+            }
+        })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Espera | Data Academy</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Main Style -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+
+    <!-- Custom Form Styles -->
+    <style>
+        .form-section {
+            padding: 120px 0 80px;
+            background: radial-gradient(circle at top right, rgba(0, 188, 212, 0.08), transparent 45%),
+                        radial-gradient(circle at bottom left, rgba(11, 37, 69, 0.05), transparent 45%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-container {
+            max-width: 720px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .form-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .form-card::before {
+            content: '';
+            display: block;
+            height: 12px;
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            width: 100%;
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            height: 4px;
+            background: var(--bg-light);
+            width: 100%;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--accent-color);
+            width: 0%;
+            transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 0 8px rgba(0, 188, 212, 0.5);
+        }
+
+        .form-header {
+            padding: 40px 40px 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .form-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+
+        .form-header p {
+            font-size: 1rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+        .form-body {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 36px;
+            opacity: 0;
+            transform: translateY(15px);
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.2s; }
+        .form-group:nth-child(3) { animation-delay: 0.3s; }
+        .form-group:nth-child(4) { animation-delay: 0.4s; }
+        .form-group:nth-child(5) { animation-delay: 0.5s; }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-label {
+            display: block;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 12px;
+        }
+
+        .form-label span.required {
+            color: #ff5f56;
+            margin-left: 4px;
+        }
+
+        /* Text Input Styling */
+        .form-input-wrapper {
+            position: relative;
+        }
+
+        .form-input-wrapper i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            transition: var(--transition);
+            font-size: 1rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px 14px 44px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-main);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: var(--transition);
+            box-shadow: inset 0 2px 4px rgba(9, 30, 66, 0.02);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 4px rgba(0, 188, 212, 0.15);
+        }
+
+        .form-control:focus + i {
+            color: var(--accent-color);
+        }
+
+        /* Textarea customization */
+        textarea.form-control {
+            padding: 16px;
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Custom Radio Buttons (Job Title) */
+        .radio-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .radio-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .radio-option {
+            position: relative;
+        }
+
+        .radio-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            padding: 14px 18px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-main);
+            color: var(--text-main);
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            user-select: none;
+            font-size: 0.95rem;
+        }
+
+        .radio-label::before {
+            content: '';
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            margin-right: 12px;
+            flex-shrink: 0;
+            transition: var(--transition);
+            background: var(--bg-main);
+        }
+
+        .radio-option input[type="radio"]:checked + .radio-label {
+            border-color: var(--accent-color);
+            background: rgba(0, 188, 212, 0.05);
+            font-weight: 600;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .radio-option input[type="radio"]:checked + .radio-label::before {
+            border-color: var(--accent-color);
+            border-width: 5px;
+            background: var(--bg-main);
+        }
+
+        .form-group-combobox {
+            position: relative;
+            z-index: 100;
+        }
+
+        /* ========================================================
+           Custom Combobox / Select box with Tagging & Search
+           ======================================================== */
+        .combobox-container {
+            position: relative;
+            width: 100%;
+            user-select: none;
+        }
+
+        .combobox-select {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 54px;
+            padding: 10px 16px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-main);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: inset 0 2px 4px rgba(9, 30, 66, 0.02);
+        }
+
+        .combobox-select:focus, .combobox-select.active {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 4px rgba(0, 188, 212, 0.15);
+        }
+
+        .combobox-placeholder {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .combobox-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            max-width: 92%;
+        }
+
+        .combobox-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 188, 212, 0.08);
+            color: var(--primary-color);
+            border: 1px solid rgba(0, 188, 212, 0.25);
+            border-radius: 8px;
+            padding: 5px 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        html.dark-theme .combobox-tag {
+            color: var(--accent-color);
+            background: rgba(0, 188, 212, 0.15);
+            border-color: rgba(0, 188, 212, 0.4);
+        }
+
+        .combobox-tag i {
+            font-size: 0.75rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .combobox-tag i:hover {
+            color: #ff5f56;
+        }
+
+        .combobox-chevron {
+            color: var(--text-muted);
+            transition: transform 0.3s ease;
+            margin-left: 10px;
+        }
+
+        .combobox-container.open .combobox-chevron {
+            transform: rotate(180deg);
+            color: var(--accent-color);
+        }
+
+        /* Dropdown Panel */
+        .combobox-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+            animation: dropdownSlideIn 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .combobox-container.open .combobox-dropdown {
+            display: block;
+        }
+
+        @keyframes dropdownSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .combobox-search-wrapper {
+            position: sticky;
+            top: 0;
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            z-index: 10;
+        }
+
+        .combobox-search-wrapper i {
+            color: var(--text-muted);
+            margin-right: 12px;
+            font-size: 0.95rem;
+        }
+
+        .combobox-search-input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+
+        .combobox-search-input:focus {
+            outline: none;
+        }
+
+        .combobox-options-list {
+            max-height: 240px;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        /* Custom Scrollbar for Dropdown */
+        .combobox-options-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        .combobox-options-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .combobox-options-list::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        .combobox-option-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 2px;
+        }
+
+        .combobox-option-item:hover {
+            background: var(--bg-light);
+        }
+
+        .combobox-option-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            background: var(--bg-main);
+            flex-shrink: 0;
+        }
+
+        .combobox-option-item.selected .combobox-option-checkbox {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .combobox-option-checkbox i {
+            font-size: 9px;
+            color: var(--primary-color);
+            display: none;
+        }
+
+        html.dark-theme .combobox-option-checkbox i {
+            color: var(--primary-dark);
+        }
+
+        .combobox-option-item.selected .combobox-option-checkbox i {
+            display: block;
+        }
+
+        .combobox-option-text {
+            font-size: 0.95rem;
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        .combobox-option-item.selected .combobox-option-text {
+            font-weight: 600;
+        }
+
+        .combobox-no-results {
+            padding: 16px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            display: none;
+        }
+
+        /* Success & Actions */
+        .form-actions {
+            margin-top: 40px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            font-size: 1.1rem;
+            letter-spacing: 0.02em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            box-shadow: 0 4px 15px rgba(11, 37, 69, 0.25);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(11, 37, 69, 0.35);
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+        }
+
+        /* Success screen styling */
+        .success-screen {
+            display: none;
+            text-align: center;
+            padding: 60px 40px;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(37, 211, 102, 0.1);
+            color: var(--secondary-color);
+            font-size: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            animation: pulseSuccess 2s infinite;
+        }
+
+        @keyframes pulseSuccess {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+
+        .success-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 12px;
+        }
+
+        .success-message {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.6;
+            max-width: 500px;
+            margin: 0 auto 30px;
+        }
+
+        .success-details {
+            background: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: left;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+
+        .success-details h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .success-details ul {
+            padding-left: 20px;
+            list-style: disc;
+            color: var(--text-muted);
+        }
+
+        .btn-whatsapp-redirect {
+            background-color: var(--secondary-color) !important;
+            color: white !important;
+            width: 100%;
+            padding: 16px;
+            font-size: 1.1rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.25);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 700;
+        }
+
+        .btn-whatsapp-redirect:hover {
+            background-color: #20b858 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35);
+        }
+
+        /* Dark mode adaptations */
+        html.dark-theme .form-card::before {
+            background: linear-gradient(90deg, var(--accent-color) 0%, var(--primary-light) 100%);
+        }
+        html.dark-theme .btn-submit {
+            background: linear-gradient(135deg, var(--accent-color) 0%, var(--primary-light) 100%);
+            color: var(--primary-dark) !important;
+            font-weight: 800;
+        }
+        html.dark-theme .btn-submit:hover {
+            background: linear-gradient(135deg, var(--accent-hover) 0%, var(--primary-color) 100%);
+        }
+        html.dark-theme .radio-option input[type="radio"]:checked + .radio-label {
+            background: rgba(0, 188, 212, 0.1);
+        }
+        html.dark-theme .success-details h4 {
+            color: var(--accent-color);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar scrolled" id="navbar">
+        <div class="container nav-container">
+            <a href="../index.html" class="logo">
+                <img src="../assets/img/logo/logo_claro.png" class="logo-light" alt="Data Academy">
+                <img src="../assets/img/logo/logo_oscuro.png" class="logo-dark" alt="Data Academy">
+            </a>
+            <ul class="nav-links">
+                <li><a href="../index.html#inicio">Inicio</a></li>
+                <li><a href="../index.html#proyectos">Proyectos</a></li>
+                <li><a href="../index.html#formacion">Formación</a></li>
+                <li><a href="../landing-cursos.html">Calendario</a></li>
+                <li><a href="../landing-ventas.html">Precios Cursos</a></li>
+                <li><a href="biografia.html">Profesores</a></li>
+                <li><a href="../index.html#contacto" class="btn-primary-outline">Contacto</a></li>
+            </ul>
+            <button id="theme-toggle" class="theme-toggle-btn" aria-label="Cambiar tema">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Section -->
+    <section class="form-section">
+        <div class="container form-container">
+            <!-- Form Card -->
+            <div class="form-card" id="form-card-container">
+                <!-- Progress indicator -->
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="form-progress"></div>
+                </div>
+
+                <!-- Form Header -->
+                <div class="form-header">
+                    <h1>📋 Lista de espera de la 4ta edición de Cursos</h1>
+                    <p>Asegura tu lugar y recibe información exclusiva sobre nuestros próximos cursos de capacitación tecnológica en Data Academy.</p>
+                </div>
+
+                <!-- Form Body -->
+                <form class="form-body" id="waitlist-form" novalidate>
+                    <!-- Name input -->
+                    <div class="form-group">
+                        <label class="form-label" for="user-name">Nombre Completo <span class="required">*</span></label>
+                        <div class="form-input-wrapper">
+                            <input class="form-control" type="text" id="user-name" placeholder="Ej. Juan Pérez" required>
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+
+                    <!-- Contact input -->
+                    <div class="form-group">
+                        <label class="form-label" for="user-contact">Número de Contacto (WhatsApp, etc.) <span class="required">*</span></label>
+                        <div class="form-input-wrapper">
+                            <input class="form-control" type="tel" id="user-contact" placeholder="Ej. +51 904 882 577" required>
+                            <i class="fab fa-whatsapp"></i>
+                        </div>
+                    </div>
+
+                    <!-- Position / Current job -->
+                    <div class="form-group">
+                        <label class="form-label">Tu puesto actual <span class="required">*</span></label>
+                        <div class="radio-grid">
+                            <div class="radio-option">
+                                <input type="radio" id="puesto-practicante" name="user-puesto" value="Practicante" required>
+                                <label class="radio-label" for="puesto-practicante">Practicante</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="puesto-asistente" name="user-puesto" value="Asistente">
+                                <label class="radio-label" for="puesto-asistente">Asistente</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="puesto-busca" name="user-puesto" value="Busca Prácticas">
+                                <label class="radio-label" for="puesto-busca">Busca Prácticas</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="puesto-otro" name="user-puesto" value="Otro (Busco ingresar al mundo de los datos)">
+                                <label class="radio-label" for="puesto-otro">Otro / Ingreso a datos</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Courses Combobox Dropdown -->
+                    <div class="form-group form-group-combobox">
+                        <label class="form-label">¿En qué curso o cursos estás interesado? <span class="required">*</span></label>
+                        <div class="combobox-container" id="courses-combobox">
+                            <div class="combobox-select" tabindex="0" id="combobox-trigger">
+                                <div class="combobox-tags" id="selected-tags-container">
+                                    <span class="combobox-placeholder">Selecciona uno o más cursos...</span>
+                                </div>
+                                <i class="fas fa-chevron-down combobox-chevron"></i>
+                            </div>
+                            <div class="combobox-dropdown">
+                                <div class="combobox-search-wrapper">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" class="combobox-search-input" id="combobox-search" placeholder="Buscar curso..." autocomplete="off">
+                                </div>
+                                <div class="combobox-options-list" id="combobox-options-list">
+                                    <!-- Options populated dynamically -->
+                                </div>
+                                <div class="combobox-no-results" id="combobox-no-results">No se encontraron cursos coincidentes.</div>
+                            </div>
+                        </div>
+                        <!-- Hidden inputs for validation & data serialization -->
+                        <div id="hidden-inputs-container" style="display: none;"></div>
+                    </div>
+
+                    <!-- Suggestions textarea -->
+                    <div class="form-group">
+                        <label class="form-label" for="user-suggestions">¿Qué quisieras ver en el curso?</label>
+                        <div class="form-input-wrapper">
+                            <textarea class="form-control" id="user-suggestions" placeholder="Escribe tus dudas, sugerencias o temas de interés..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="form-actions">
+                        <button class="btn btn-submit" type="submit" id="submit-btn">
+                            <span>Asegurar mi lugar</span> <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Success Screen -->
+                <div class="success-screen" id="success-screen">
+                    <div class="success-icon">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <h2 class="success-title">¡Registro Exitoso!</h2>
+                    <p class="success-message">Tus datos para la lista de espera han sido preparados con éxito. Para asegurar tu prioridad en la 4ta edición de cursos, haz clic en el siguiente enlace para enviar tus datos directamente a nuestro WhatsApp.</p>
+                    
+                    <div class="success-details">
+                        <h4>Resumen de tu registro:</h4>
+                        <p><strong>Nombre:</strong> <span id="resumen-nombre"></span></p>
+                        <p><strong>Puesto actual:</strong> <span id="resumen-puesto"></span></p>
+                        <p><strong>Cursos seleccionados:</strong></p>
+                        <ul id="resumen-cursos"></ul>
+                    </div>
+
+                    <a href="#" target="_blank" class="btn btn-whatsapp-redirect" id="whatsapp-redirect-btn">
+                        Enviar registro por WhatsApp <i class="fab fa-whatsapp"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content" style="grid-template-columns: 1fr; text-align: center; gap: 24px;">
+            <div class="footer-brand">
+                <a href="../index.html" class="logo" style="justify-content: center;">
+                    <img src="../assets/img/logo/logo_oscuro.png" style="height: 38px; width: auto;" alt="Data Academy">
+                </a>
+                <p>Transformando datos complejos en decisiones estratégicas claras a través de Power BI y Automatizaciones.</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Data Academy. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../assets/js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('waitlist-form');
+            const nameInput = document.getElementById('user-name');
+            const contactInput = document.getElementById('user-contact');
+            const suggestionsInput = document.getElementById('user-suggestions');
+            const progressBar = document.getElementById('form-progress');
+            
+            const formCard = document.getElementById('form-card-container');
+            const successScreen = document.getElementById('success-screen');
+            
+            const resumenNombre = document.getElementById('resumen-nombre');
+            const resumenPuesto = document.getElementById('resumen-puesto');
+            const resumenCursos = document.getElementById('resumen-cursos');
+            const whatsappRedirectBtn = document.getElementById('whatsapp-redirect-btn');
+
+            // Cursos Disponibles Array
+            const cursosDisponibles = [
+                "Python para Automatización",
+                "Power BI Básico Intermedio",
+                "SQL Básico - Intermedio (SQL Server)",
+                "SQL Intermedio-Avanzado (SQL Server y GCP)",
+                "Power Automate - Apps",
+                "GCP",
+                "AZURE",
+                "CERTIFICACIÓN: PL-300",
+                "CERTIFICACIÓN: DP-900",
+                "FABRIC"
+            ];
+
+            // Setup Combobox options dynamically
+            const optionsList = document.getElementById('combobox-options-list');
+            const hiddenContainer = document.getElementById('hidden-inputs-container');
+
+            cursosDisponibles.forEach((curso, index) => {
+                // Populate hidden inputs
+                const input = document.createElement('input');
+                input.type = 'checkbox';
+                input.id = `curso-hidden-${index}`;
+                input.name = 'user-cursos';
+                input.value = curso;
+                hiddenContainer.appendChild(input);
+
+                // Populate option items
+                const option = document.createElement('div');
+                option.className = 'combobox-option-item';
+                option.dataset.index = index;
+                option.dataset.value = curso;
+                option.innerHTML = `
+                    <div class="combobox-option-checkbox">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <span class="combobox-option-text">${curso}</span>
+                `;
+                optionsList.appendChild(option);
+            });
+
+            // Combobox interactivity
+            const comboboxContainer = document.getElementById('courses-combobox');
+            const trigger = document.getElementById('combobox-trigger');
+            const searchInput = document.getElementById('combobox-search');
+            const tagsContainer = document.getElementById('selected-tags-container');
+            const placeholder = tagsContainer.querySelector('.combobox-placeholder');
+
+            trigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = comboboxContainer.classList.toggle('open');
+                if (isOpen) {
+                    searchInput.focus();
+                    trigger.classList.add('active');
+                } else {
+                    trigger.classList.remove('active');
+                }
+            });
+
+            // Close when clicking outside
+            document.addEventListener('click', () => {
+                comboboxContainer.classList.remove('open');
+                trigger.classList.remove('active');
+            });
+
+            // Prevent closing when clicking inside the dropdown
+            document.querySelector('.combobox-dropdown').addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+
+            // Search filter
+            searchInput.addEventListener('input', () => {
+                const query = searchInput.value.toLowerCase().trim();
+                const items = document.querySelectorAll('.combobox-option-item');
+                const noResults = document.getElementById('combobox-no-results');
+                let hasMatches = false;
+
+                items.forEach(item => {
+                    const text = item.dataset.value.toLowerCase();
+                    if (text.includes(query)) {
+                        item.style.display = 'flex';
+                        hasMatches = true;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                noResults.style.display = hasMatches ? 'none' : 'block';
+            });
+
+            // Tags Rendering
+            function renderTags() {
+                const selectedOptions = document.querySelectorAll('.combobox-option-item.selected');
+                
+                // Clear existing tags
+                tagsContainer.querySelectorAll('.combobox-tag').forEach(tag => tag.remove());
+                
+                if (selectedOptions.length === 0) {
+                    placeholder.style.display = 'block';
+                } else {
+                    placeholder.style.display = 'none';
+                    selectedOptions.forEach(opt => {
+                        const val = opt.dataset.value;
+                        const index = opt.dataset.index;
+                        
+                        const tag = document.createElement('div');
+                        tag.className = 'combobox-tag';
+                        tag.innerHTML = `
+                            <span>${val}</span>
+                            <i class="fas fa-times" data-index="${index}"></i>
+                        `;
+                        
+                        // Delete tag click handler
+                        tag.querySelector('i').addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            deselectOption(index);
+                        });
+                        
+                        tagsContainer.appendChild(tag);
+                    });
+                }
+            }
+
+            function selectOption(index) {
+                const option = document.querySelector(`.combobox-option-item[data-index="${index}"]`);
+                if (option) option.classList.add('selected');
+                
+                const hiddenInput = document.getElementById(`curso-hidden-${index}`);
+                if (hiddenInput) hiddenInput.checked = true;
+                
+                renderTags();
+                updateProgress();
+            }
+
+            function deselectOption(index) {
+                const option = document.querySelector(`.combobox-option-item[data-index="${index}"]`);
+                if (option) option.classList.remove('selected');
+                
+                const hiddenInput = document.getElementById(`curso-hidden-${index}`);
+                if (hiddenInput) hiddenInput.checked = false;
+                
+                renderTags();
+                updateProgress();
+            }
+
+            // Click option handler
+            document.querySelectorAll('.combobox-option-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const index = item.dataset.index;
+                    const isSelected = item.classList.contains('selected');
+                    if (isSelected) {
+                        deselectOption(index);
+                    } else {
+                        selectOption(index);
+                    }
+                });
+            });
+
+            // Form inputs tracking to update progress bar
+            function getSelectedPuesto() {
+                const checkedPuesto = document.querySelector('input[name="user-puesto"]:checked');
+                return checkedPuesto ? checkedPuesto.value : null;
+            }
+
+            function getSelectedCursos() {
+                const checkedCursos = document.querySelectorAll('input[name="user-cursos"]:checked');
+                return Array.from(checkedCursos).map(cb => cb.value);
+            }
+
+            function updateProgress() {
+                let completedSteps = 0;
+                let totalSteps = 4; // Name, Contact, Position, At least one course
+
+                if (nameInput.value.trim().length > 0) completedSteps++;
+                if (contactInput.value.trim().length > 0) completedSteps++;
+                if (getSelectedPuesto() !== null) completedSteps++;
+                if (getSelectedCursos().length > 0) completedSteps++;
+
+                const progressPercent = (completedSteps / totalSteps) * 100;
+                progressBar.style.width = `${progressPercent}%`;
+            }
+
+            // Bind progress bar updates
+            nameInput.addEventListener('input', updateProgress);
+            contactInput.addEventListener('input', updateProgress);
+            
+            document.querySelectorAll('input[name="user-puesto"]').forEach(radio => {
+                radio.addEventListener('change', updateProgress);
+            });
+
+            // Form validation and submission
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                let isValid = true;
+                nameInput.style.borderColor = '';
+                contactInput.style.borderColor = '';
+                comboboxContainer.querySelector('.combobox-select').style.borderColor = '';
+
+                if (!nameInput.value.trim()) {
+                    nameInput.style.borderColor = '#ff5f56';
+                    isValid = false;
+                }
+
+                if (!contactInput.value.trim()) {
+                    contactInput.style.borderColor = '#ff5f56';
+                    isValid = false;
+                }
+
+                const puesto = getSelectedPuesto();
+                if (!puesto) {
+                    alert('Por favor selecciona tu puesto actual.');
+                    isValid = false;
+                    return;
+                }
+
+                const cursos = getSelectedCursos();
+                if (cursos.length === 0) {
+                    comboboxContainer.querySelector('.combobox-select').style.borderColor = '#ff5f56';
+                    alert('Por favor selecciona al menos un curso de tu interés.');
+                    isValid = false;
+                    return;
+                }
+
+                if (!isValid) {
+                    alert('Por favor completa todos los campos requeridos (*)');
+                    return;
+                }
+
+                // Populate Success Summary
+                resumenNombre.textContent = nameInput.value.trim();
+                resumenPuesto.textContent = puesto;
+                
+                resumenCursos.innerHTML = '';
+                cursos.forEach(c => {
+                    const li = document.createElement('li');
+                    li.textContent = c;
+                    resumenCursos.appendChild(li);
+                });
+
+                // WhatsApp text encoding
+                const name = nameInput.value.trim();
+                const contact = contactInput.value.trim();
+                const suggestions = suggestionsInput.value.trim() || 'Ninguna';
+                
+                const waMessage = `¡Hola Data Academy! Me acabo de registrar en la lista de espera para la 4ta edición de cursos. Aquí están mis detalles:\n\n` +
+                                  `👤 *Nombre:* ${name}\n` +
+                                  `📱 *Contacto:* ${contact}\n` +
+                                  `💼 *Puesto actual:* ${puesto}\n` +
+                                  `📚 *Cursos de interés:* ${cursos.join(', ')}\n` +
+                                  `💡 *Propuestas/Sugerencias:* ${suggestions}`;
+
+                const waPhone = '51904882577'; // Official Data Academy Number
+                const waLink = `https://api.whatsapp.com/send/?phone=${waPhone}&text=${encodeURIComponent(waMessage)}&type=phone_number&app_absent=0`;
+                
+                whatsappRedirectBtn.href = waLink;
+                
+                // Switch forms
+                form.style.display = 'none';
+                document.querySelector('.form-header').style.display = 'none';
+                successScreen.style.display = 'block';
+                
+                formCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                // Optional auto-redirect
+                setTimeout(() => {
+                    window.open(waLink, '_blank');
+                }, 3000);
+            });
+        });
+    </script>
+</body>
+
+</html>

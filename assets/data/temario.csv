@@ -1,0 +1,41 @@
+CURSO,CLASE_NUM,TEMA,DESCRIPCION
+EXCEL FOR DATA ANALYST,1,Introducción a Excel para Datos y Power Query ETL,Configuración del entorno de trabajo e ingesta y limpieza de datos con Power Query.
+EXCEL FOR DATA ANALYST,2,Limpieza y Transformación de Datos Avanzada,Anulación de dinamización de columnas, combinación de consultas y técnicas de normalización.
+EXCEL FOR DATA ANALYST,3,Modelado de Datos y Relaciones en Excel (Power Pivot),Diseño de modelos en estrella y relaciones lógicas dentro del motor de datos de Excel.
+EXCEL FOR DATA ANALYST,4,Fórmulas Avanzadas y Funciones Lógicas,Dominio de funciones modernas como BUSCARX, COINCIDIR y condicionales lógicos anidados.
+EXCEL FOR DATA ANALYST,5,Funciones Estadísticas y Agregación de Negocios,Uso de funciones analíticas avanzadas para extraer métricas agrupadas y cálculos acumulativos.
+EXCEL FOR DATA ANALYST,6,Tablas Dinámicas y Medidas DAX básicas,Creación de tablas dinámicas avanzadas y desarrollo de medidas DAX básicas para análisis interactivo.
+EXCEL FOR DATA ANALYST,7,Diseño de Dashboards Interactivos y Principios UX,Construcción de dashboards visualmente atractivos con segmentadores de datos y gráficos dinámicos estructurados.
+EXCEL FOR DATA ANALYST,8,Proyecto Integrador: Automatización de Reportes Financieros,Desarrollo de un caso de negocio real automatizando un reporte financiero y KPIs desde cero.
+POWER BI BASICO-INTERMEDIO,1,Fundamentos de Business Intelligence e Ingesta de Datos,Conceptos clave de BI, instalación del entorno y conexión con diferentes fuentes de datos.
+POWER BI BASICO-INTERMEDIO,2,Power Query ETL: Preparación y Modelado Limpio,Limpieza, transformación, anulación de dinamización de columnas y automatización del pipeline.
+POWER BI BASICO-INTERMEDIO,3,Modelado de Datos en Estrella,Esquemas Estrella (hechos y dimensiones), claves primarias/foráneas y buenas prácticas.
+POWER BI BASICO-INTERMEDIO,4,Introducción al Lenguaje DAX y Contextos,Columnas calculadas vs. medidas, sintaxis básica de DAX y comprensión del contexto de evaluación.
+POWER BI BASICO-INTERMEDIO,5,Funciones DAX Avanzadas e Inteligencia de Tiempo,Uso de CALCULATE, FILTER, y cálculos temporales (YTD, SAMEPERIODLASTYEAR).
+POWER BI BASICO-INTERMEDIO,6,Visualización y UX en Power BI,Diseño de tableros orientados a la experiencia de usuario (layouts, paleta de colores y KPI Cards).
+POWER BI BASICO-INTERMEDIO,7,Storytelling Interactivo y Marcadores,Uso de marcadores, botones, tooltips de página y parámetros de campo para dashboards interactivos.
+POWER BI BASICO-INTERMEDIO,8,Publicación y Colaboración en Power BI Service,Publicación en la nube, configuración de áreas de trabajo, Roles RLS (seguridad) y refresco automático.
+SQL BASICO-INTERMEDIO,1,Fundamentos de Bases de Datos Relacionales y SQL,Conceptos de bases de datos relacionales, tipos de datos y entorno SQL Server Management Studio.
+SQL BASICO-INTERMEDIO,2,Consultas de Selección y Filtrado de Datos,Estructura básica de consulta con SELECT, filtros lógicos mediante WHERE, y ordenamiento con ORDER BY.
+SQL BASICO-INTERMEDIO,3,Agrupación de Datos y Funciones Agregadas,Resumen de información con GROUP BY, HAVING, y funciones clásicas (SUM, AVG, COUNT, MIN, MAX).
+SQL BASICO-INTERMEDIO,4,Relación de Tablas y Uniones de Datos,Uso de INNER JOIN, LEFT JOIN, RIGHT JOIN y FULL JOIN para conectar datos de distintas tablas.
+SQL BASICO-INTERMEDIO,5,Subconsultas y Expresiones de Tabla Comunes (CTEs),Escritura de subconsultas lógicas y estructuración limpia del código SQL utilizando WITH (CTEs).
+SQL BASICO-INTERMEDIO,6,Manipulación de Fechas, Textos y Control de Nulos,Funciones integradas para formateo de strings, operaciones de tiempo y control de valores nulos (COALESCE, ISNULL).
+SQL BASICO-INTERMEDIO,7,Vistas y Procedimientos Almacenados Básicos,Creación de objetos reutilizables como Views y Store Procedures sencillos para automatizar consultas frecuentes.
+SQL BASICO-INTERMEDIO,8,Proyecto Integrador: KPIs de Negocio en SQL,Análisis de rentabilidad y segmentación básica de clientes usando bases de datos transaccionales.
+SQL INTERMEDIO-AVANZADO,1,Repaso de Joins Avanzados y Buenas Prácticas,Uniones complejas, optimización de queries y análisis de planes de ejecución básicos.
+SQL INTERMEDIO-AVANZADO,2,Funciones de Ventana (Window Functions) - Nivel 1,Uso de OVER con funciones de clasificación como ROW_NUMBER, RANK y DENSE_RANK.
+SQL INTERMEDIO-AVANZADO,3,Funciones de Ventana (Window Functions) - Nivel 2,Análisis avanzado con LEAD, LAG, FIRST_VALUE, LAST_VALUE y sumas acumulativas.
+SQL INTERMEDIO-AVANZADO,4,Condicionales CASE WHEN Avanzados y Pivotado,Estructuras de decisión en queries complejas y transposición de filas a columnas (PIVOT).
+SQL INTERMEDIO-AVANZADO,5,Optimización y Rendimiento de Consultas,Uso de índices Clustered y Non-Clustered, y análisis detallado de velocidad de ejecución.
+SQL INTERMEDIO-AVANZADO,6,Transacciones y Control de Errores en T-SQL,Conceptos de ACID, bloques BEGIN TRANSACTION, COMMIT, ROLLBACK y TRY...CATCH.
+SQL INTERMEDIO-AVANZADO,7,SQL en la Nube con BigQuery y GCP,Consultas sobre Big Data, almacenamiento columnar y diferencias clave de sintaxis.
+SQL INTERMEDIO-AVANZADO,8,Proyecto Final: ETL Pipeline usando SQL,Ingesta, transformación y carga de datos en BigQuery simulando un entorno de ingeniería real.
+PYTHON FOR DATA ANALYST,1,Introducción a Python y Jupyter Notebooks,Instalación de Anaconda, uso del entorno interactivo, tipos de variables y sintaxis básica.
+PYTHON FOR DATA ANALYST,2,Estructuras de Control y Funciones,Estructuración de condicionales (if/else), bucles (for/while) y definición de funciones reutilizables.
+PYTHON FOR DATA ANALYST,3,Introducción a Pandas y Lectura de Datos,Manipulación de Series y DataFrames, y lectura de archivos externos (CSV, Excel, JSON).
+PYTHON FOR DATA ANALYST,4,Limpieza de Datos con Pandas,Tratamiento de valores nulos (missing values), duplicados, casteo de tipos de datos y formateo de texto.
+PYTHON FOR DATA ANALYST,5,Agrupación y Combinación de DataFrames,Uso del método groupby, cruces de tablas con merge, y unión de estructuras con concat.
+PYTHON FOR DATA ANALYST,6,Visualización Científica con Matplotlib y Seaborn,Creación de gráficos de barras, dispersión, histogramas y mapas de calor personalizados.
+PYTHON FOR DATA ANALYST,7,Análisis de Series Temporales y Automatización de Archivos,Manipulación de objetos datetime en Pandas y exportación automática a múltiples hojas de Excel formateadas.
+PYTHON FOR DATA ANALYST,8,Proyecto Final: Análisis Exploratorio de Datos (EDA),Carga de un dataset real, limpieza, formulación de hipótesis, visualización y obtención de conclusiones de negocio.

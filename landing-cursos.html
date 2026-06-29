@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <link rel="icon" type="image/png" href="assets/img/logo/logo_pestana.png">
+    <script>
+        (function () {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark-theme');
+            }
+        })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario Académico y Cursos | Data Academy</title>
+    <meta name="description"
+        content="Explora el calendario académico de la 4ta edición de cursos en vivo de Data Academy. Excel, SQL, Power BI y Python.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="assets/css/style.css">
+
+    <!-- Custom CSS for Calendar Dashboard -->
+    <style>
+        /* General Adjustments */
+        .calendar-hero {
+            padding: 120px 0 60px;
+            background: radial-gradient(circle at top right, rgba(0, 188, 212, 0.1), transparent 45%),
+                        radial-gradient(circle at bottom left, rgba(11, 37, 69, 0.05), transparent 45%);
+            text-align: center;
+        }
+
+        .calendar-hero h1 {
+            margin-bottom: 12px;
+        }
+
+        .calendar-hero p {
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        /* Selector Tabs Styling */
+        .tabs-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 40px;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            border: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tab-btn:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: #ffffff !important;
+            box-shadow: var(--shadow-md);
+        }
+
+        html.dark-theme .tab-btn.active {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: var(--primary-dark) !important;
+        }
+
+        .color-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* Course specific border highlights for tabs */
+        .border-course-excel { border-left: 3px solid #9b5de5; }
+        .border-course-pbi { border-left: 3px solid #f1c40f; }
+        .border-course-sql-basic { border-left: 3px solid #2ec4b6; }
+        .border-course-sql-adv { border-left: 3px solid #00b4d8; }
+        .border-course-python { border-left: 3px solid #0077b6; }
+
+        /* Dashboard Workspace Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 32px;
+            margin-bottom: 60px;
+            align-items: start;
+        }
+
+        @media (max-width: 992px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Calendar Card Styling */
+        .calendar-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            padding: 30px;
+            overflow: visible; /* Permits tooltips to display without clipping */
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+        }
+
+        .calendar-header h3 {
+            margin-bottom: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .calendar-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Calendar Day Grid */
+        .calendar-weekdays {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        /* Technology Logo Indicators */
+        .tech-logo-indicator {
+            width: 14px;
+            height: 14px;
+            object-fit: contain;
+            vertical-align: middle;
+            margin-right: 6px;
+            border-radius: 2px;
+        }
+
+        .multi-class-indicators {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            margin-top: auto;
+            width: 100%;
+        }
+
+        .multi-class-indicators img {
+            width: 14px;
+            height: 14px;
+            object-fit: contain;
+        }
+
+        .calendar-day {
+            background-color: var(--bg-light);
+            border-radius: 12px;
+            min-height: 80px; /* Uniform height to prevent row misalignment */
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        html.dark-theme .calendar-day {
+            background-color: rgba(255,255,255,0.03);
+        }
+
+        .calendar-day.empty {
+            background-color: transparent !important;
+            border: none !important;
+            pointer-events: none;
+        }
+
+        .day-number {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-main);
+            align-self: flex-start;
+        }
+
+        .calendar-day.has-class {
+            cursor: pointer;
+        }
+
+        .calendar-day.has-class:hover {
+            transform: scale(1.05);
+            z-index: 10;
+            box-shadow: var(--shadow-md);
+        }
+
+        .class-badge {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 8px;
+            margin-top: auto;
+            text-align: center;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Responsive Tooltip Styling (Zero Overflow) */
+        .calendar-tooltip {
+            position: absolute;
+            bottom: 115%;
+            left: 50%;
+            transform: translateX(-50%) translateY(5px);
+            width: 210px;
+            background: #0b2545;
+            color: #ffffff;
+            padding: 10px 12px;
+            border-radius: 10px;
+            box-shadow: var(--shadow-lg), 0 8px 20px rgba(0,0,0,0.4);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+            pointer-events: none;
+            border: 1px solid rgba(255,255,255,0.15);
+            font-size: 0.75rem;
+            line-height: 1.4;
+            text-align: left;
+        }
+
+        /* Tooltip alignments by column index */
+        .calendar-day.tooltip-left .calendar-tooltip {
+            left: 0;
+            transform: translateX(0) translateY(5px);
+        }
+        .calendar-day.tooltip-left:hover .calendar-tooltip {
+            transform: translateX(0) translateY(0);
+        }
+
+        .calendar-day.tooltip-right .calendar-tooltip {
+            left: auto;
+            right: 0;
+            transform: translateX(0) translateY(5px);
+        }
+        .calendar-day.tooltip-right:hover .calendar-tooltip {
+            transform: translateX(0) translateY(0);
+        }
+
+        .calendar-day:not(.tooltip-left):not(.tooltip-right) .calendar-tooltip {
+            left: 50%;
+            transform: translateX(-50%) translateY(5px);
+        }
+        .calendar-day:not(.tooltip-left):not(.tooltip-right):hover .calendar-tooltip {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .calendar-day:hover .calendar-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .tooltip-header {
+            font-size: 0.85rem;
+            font-weight: 800;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .tooltip-body {
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+
+        .tooltip-desc {
+            display: block;
+            margin-top: 4px;
+            color: #a5adba;
+            font-style: italic;
+        }
+
+        /* Dynamic Theme-safe Text Colors (AAA Contrast) */
+        :root {
+            --excel-text: #7209b7;
+            --pbi-text: #996500;
+            --sql-basic-text: #007a6e;
+            --sql-adv-text: #006880;
+            --python-text: #005086;
+        }
+
+        html.dark-theme {
+            --excel-text: #d8b4fe;
+            --pbi-text: #fef08a;
+            --sql-basic-text: #6ee7b7;
+            --sql-adv-text: #7dd3fc;
+            --python-text: #93c5fd;
+        }
+
+        /* Course colors */
+        .course-excel {
+            background-color: rgba(155, 93, 229, 0.08) !important;
+            border: 1px solid rgba(155, 93, 229, 0.4) !important;
+        }
+        .course-excel .class-badge {
+            background-color: #9b5de5 !important;
+            color: #ffffff !important;
+        }
+        .font-course-excel { color: var(--excel-text) !important; }
+
+        .course-pbi {
+            background-color: rgba(241, 196, 15, 0.08) !important;
+            border: 1px solid rgba(241, 196, 15, 0.4) !important;
+        }
+        .course-pbi .class-badge {
+            background-color: #f1c40f !important;
+            color: #0b2545 !important;
+        }
+        .font-course-pbi { color: var(--pbi-text) !important; }
+
+        .course-sql-basic {
+            background-color: rgba(46, 196, 182, 0.08) !important;
+            border: 1px solid rgba(46, 196, 182, 0.4) !important;
+        }
+        .course-sql-basic .class-badge {
+            background-color: #2ec4b6 !important;
+            color: #ffffff !important;
+        }
+        .font-course-sql-basic { color: var(--sql-basic-text) !important; }
+
+        .course-sql-adv {
+            background-color: rgba(0, 180, 216, 0.08) !important;
+            border: 1px solid rgba(0, 180, 216, 0.4) !important;
+        }
+        .course-sql-adv .class-badge {
+            background-color: #00b4d8 !important;
+            color: #ffffff !important;
+        }
+        .font-course-sql-adv { color: var(--sql-adv-text) !important; }
+
+        .course-python {
+            background-color: rgba(0, 119, 182, 0.08) !important;
+            border: 1px solid rgba(0, 119, 182, 0.4) !important;
+        }
+        .course-python .class-badge {
+            background-color: #0077b6 !important;
+            color: #ffffff !important;
+        }
+        .font-course-python { color: var(--python-text) !important; }
+
+        /* Style for conflict cells (cruces) */
+        .calendar-day.cruce-conflict {
+            background-color: rgba(255, 193, 7, 0.12) !important;
+            border: 2px solid #ffc107 !important;
+        }
+
+        html.dark-theme .calendar-day.cruce-conflict {
+            background-color: rgba(255, 193, 7, 0.22) !important;
+            border: 2px solid #ffc107 !important;
+        }
+
+        .cruce-conflict .class-badge {
+            background-color: #ffc107 !important;
+            color: #0b2545 !important;
+            font-weight: 800 !important;
+        }
+
+        /* Cruce Alert Box Styling */
+        .cruce-alert-box {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            border-left: 5px solid #ffc107;
+            color: #856404;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        html.dark-theme .cruce-alert-box {
+            background-color: rgba(255, 193, 7, 0.15);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-left: 5px solid #ffc107;
+            color: #ffe082;
+        }
+
+        .cruce-alert-icon {
+            font-size: 1.8rem;
+            color: #ffc107;
+        }
+
+        .cruce-alert-content h4 {
+            margin-bottom: 6px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #856404;
+            margin-top: 0;
+        }
+
+        html.dark-theme .cruce-alert-content h4 {
+            color: #ffe082;
+        }
+
+        .cruce-alert-content p {
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            color: inherit;
+        }
+
+        .cruce-alert-content ul {
+            padding-left: 20px;
+            margin-bottom: 0;
+            list-style: disc;
+            font-size: 0.9rem;
+            color: inherit;
+        }
+
+        .cruce-alert-content li {
+            margin-bottom: 4px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Active/inactive button states in tabs */
+        .tab-btn {
+            position: relative;
+        }
+        .tab-btn .check-icon {
+            font-size: 0.8rem;
+            margin-right: 2px;
+            display: none;
+        }
+        .tab-btn.active .check-icon {
+            display: inline-block;
+        }
+
+        /* Multiple courses today styling */
+        .calendar-day.multiple-classes {
+            background: linear-gradient(135deg, rgba(11, 37, 69, 0.05) 0%, rgba(0, 188, 212, 0.05) 100%) !important;
+            border: 1.5px dashed var(--primary-light) !important;
+        }
+
+        html.dark-theme .calendar-day.multiple-classes {
+            background: linear-gradient(135deg, rgba(19, 64, 116, 0.15) 0%, rgba(0, 188, 212, 0.1) 100%) !important;
+            border: 1.5px dashed var(--accent-color) !important;
+        }
+
+        .multi-class-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin-top: auto;
+            width: 100%;
+        }
+
+        .class-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .class-dot.course-excel { background-color: #9b5de5 !important; }
+        .class-dot.course-pbi { background-color: #f1c40f !important; }
+        .class-dot.course-sql-basic { background-color: #2ec4b6 !important; }
+        .class-dot.course-sql-adv { background-color: #00b4d8 !important; }
+        .class-dot.course-python { background-color: #0077b6 !important; }
+
+        .multi-tooltip-row {
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .multi-tooltip-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .bullet-course-excel { color: #9b5de5; }
+        .bullet-course-pbi { color: #f1c40f; }
+        .bullet-course-sql-basic { color: #2ec4b6; }
+        .bullet-course-sql-adv { color: #00b4d8; }
+        .bullet-course-python { color: #0077b6; }
+
+        /* Course Detail Card Styling */
+        .info-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            padding: 30px;
+            display: grid;
+            gap: 20px;
+        }
+
+        .info-card h3 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--primary-color);
+        }
+
+        html.dark-theme .info-card h3 {
+            color: var(--accent-color);
+        }
+
+        .info-meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        html.dark-theme .info-meta-grid {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .meta-item span.label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        .meta-item span.value {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        .info-flyer-copy {
+            border-left: 3px solid var(--accent-color);
+            padding-left: 16px;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .info-flyer-copy ul {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .info-flyer-copy li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .text-accent {
+            color: var(--accent-color);
+        }
+
+        /* Syllabus Accordion */
+        .syllabus-section {
+            margin-top: 20px;
+        }
+
+        .syllabus-section h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .syllabus-accordion {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            gap: 16px;
+        }
+
+        .syllabus-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .syllabus-card-header {
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            gap: 16px;
+            user-select: none;
+        }
+
+        .class-num-bubble {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: #ffffff !important;
+            white-space: nowrap;
+        }
+
+        /* Solid backgrounds for syllabus accordion bubbles */
+        .class-num-bubble.course-excel { background-color: #9b5de5 !important; }
+        .class-num-bubble.course-pbi { background-color: #f1c40f !important; color: #0b2545 !important; }
+        .class-num-bubble.course-sql-basic { background-color: #2ec4b6 !important; }
+        .class-num-bubble.course-sql-adv { background-color: #00b4d8 !important; }
+        .class-num-bubble.course-python { background-color: #0077b6 !important; }
+
+        /* Light Mode headings contrast */
+        html:not(.dark-theme) h2,
+        html:not(.dark-theme) h3,
+        html:not(.dark-theme) h4 {
+            color: #0b2545 !important;
+        }
+
+        .syllabus-header-text {
+            flex-grow: 1;
+        }
+
+        .syllabus-header-text h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 2px;
+        }
+
+        .class-date-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .accordion-icon {
+            color: var(--text-muted);
+            transition: transform 0.3s ease;
+        }
+
+        .syllabus-card.active .accordion-icon {
+            transform: rotate(180deg);
+            color: var(--accent-color);
+        }
+
+        .syllabus-card-body {
+            padding: 0 24px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            opacity: 0;
+        }
+
+        .syllabus-card.active .syllabus-card-body {
+            padding: 0 24px 24px;
+            max-height: 200px;
+            opacity: 1;
+        }
+
+        .syllabus-card-body p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+
+        .session-meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            gap: 16px;
+        }
+
+        /* Master Placeholder Style */
+        .master-placeholder {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            padding: 40px;
+            text-align: center;
+        }
+
+        .master-table-wrapper {
+            margin-top: 30px;
+            overflow-x: auto;
+        }
+
+        .master-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        .master-table th, .master-table td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .master-table th {
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+        }
+
+        .course-name-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .days-badge {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .edition-badge {
+            background-color: rgba(0, 188, 212, 0.1);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            border-radius: 20px;
+        }
+
+        .btn-whatsapp {
+            background-color: var(--secondary-color) !important;
+            color: white !important;
+        }
+        .btn-whatsapp:hover {
+            background-color: #20b858 !important;
+            box-shadow: 0 4px 15px rgba(37,211,102,0.3) !important;
+        }
+
+        /* Mobile-First Responsive Calendar overrides */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 10px !important;
+            }
+            .calendar-card {
+                padding: 10px !important;
+                border-radius: 12px !important;
+                overflow: visible !important;
+            }
+            .calendar-header h3 {
+                font-size: 1.2rem;
+            }
+            .calendar-legend {
+                gap: 6px;
+            }
+            .legend-item {
+                font-size: 0.72rem;
+            }
+            .calendar-weekdays {
+                font-size: 0.72rem;
+            }
+            .calendar-grid {
+                gap: 4px !important;
+            }
+            .calendar-day {
+                padding: 2px 4px !important;
+                border-radius: 6px !important;
+                min-height: 52px !important;
+            }
+            .day-number {
+                font-size: 0.7rem !important;
+            }
+            .class-badge {
+                font-size: 0.5rem !important;
+                padding: 1px 0px !important;
+                margin-bottom: 2px !important;
+                border-radius: 2px !important;
+            }
+            .class-badge .desktop-text {
+                display: none !important;
+            }
+            .class-badge .mobile-text {
+                display: inline !important;
+            }
+            .tab-btn {
+                padding: 8px 12px !important;
+                font-size: 0.8rem !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 6px !important;
+            }
+            .calendar-card {
+                padding: 6px !important;
+            }
+            .calendar-day {
+                min-height: 46px !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <img src="assets/img/logo/logo_claro.png" class="logo-light" alt="Data Academy">
+                <img src="assets/img/logo/logo_oscuro.png" class="logo-dark" alt="Data Academy">
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html#inicio">Inicio</a></li>
+                <li><a href="index.html#proyectos">Proyectos</a></li>
+                <li><a href="index.html#formacion">Formación</a></li>
+                <li><a href="landing-ventas.html">Precios Cursos</a></li>
+                <li><a href="pages/biografia.html">Profesores</a></li>
+                <li><a href="index.html#contacto" class="btn-primary-outline">Contacto</a></li>
+            </ul>
+            <button id="theme-toggle" class="theme-toggle-btn" aria-label="Cambiar tema">
+                <i class="fas fa-moon"></i>
+            </button>
+            <div class="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="calendar-hero">
+        <div class="container">
+            <span class="highlight" style="font-weight: 800; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 10px; margin-bottom: 12px; border-radius: 4px;">4TA EDICIÓN 2026</span>
+            <h1 style="margin-top: 10px;">Calendario Académico y Temarios</h1>
+            <p>Visualiza el cronograma dinámico de clases en vivo y explora el contenido temático completo sesión por sesión de nuestros cursos de especialización en datos.</p>
+        </div>
+    </header>
+
+    <!-- Dashboard Core Container -->
+    <main class="container">
+        <!-- Instrucciones y Controles de Selección -->
+        <div style="margin-bottom: 24px; text-align: center;">
+            <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 12px;">
+                <i class="fas fa-info-circle text-accent"></i> Haz clic en uno o más cursos en los botones de abajo para activar/desactivar sus calendarios. El sistema detectará cruces de horarios.
+            </p>
+            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
+                <button class="btn btn-sm btn-secondary" id="btn-select-all" style="padding: 6px 12px; font-size: 0.8rem;">Seleccionar Todos</button>
+                <button class="btn btn-sm btn-secondary" id="btn-clear-selection" style="padding: 6px 12px; font-size: 0.8rem;">Limpiar Selección</button>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <button class="btn btn-sm btn-accent" id="btn-combo-analista" style="padding: 8px 14px; font-size: 0.8rem; font-weight: 700; background-color: var(--accent-color); color: var(--primary-dark) !important;"><i class="fas fa-graduation-cap"></i> Recién estoy empezando (Excel + SQL Básico + Python)</button>
+                <button class="btn btn-sm btn-accent" id="btn-combo-engineer" style="padding: 8px 14px; font-size: 0.8rem; font-weight: 700; background-color: var(--accent-color); color: var(--primary-dark) !important;"><i class="fas fa-briefcase"></i> Tengo experiencia (Power BI + SQL Avanzado + Python)</button>
+            </div>
+        </div>
+
+        <!-- Selector Tabs -->
+        <div class="tabs-container" id="course-selector-tabs">
+            <!-- Populated dynamically via JS -->
+            <button class="tab-btn active"><i class="fas fa-spinner fa-spin"></i> Cargando Cursos...</button>
+        </div>
+
+        <!-- Alerta de Cruce de Horarios (Amarillo) -->
+        <div class="cruce-alert-box" id="cruce-alert-box" style="display: none;">
+            <div class="cruce-alert-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="cruce-alert-content">
+                <h4>⚠️ Tienes un cruce de cursos</h4>
+                <p id="cruce-alert-message">Se detectó un cruce de horarios entre los siguientes cursos seleccionados:</p>
+                <div id="cruce-alert-courses-list" style="font-weight: 700; margin-top: 8px; line-height: 1.6;">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid (Calendar + Context Cards) -->
+        <div class="dashboard-grid">
+            <!-- Left Side: Interactive Calendar -->
+            <div class="calendar-card" id="calendar-card-wrapper">
+                <div class="calendar-header">
+                    <div>
+                        <h3>Agosto 2026</h3>
+                        <div class="calendar-legend" id="calendar-legend-container">
+                            <div class="legend-item"><img src="assets/img/formation/3Excel.png" class="tech-logo-indicator" alt="Excel"> Excel</div>
+                            <div class="legend-item"><img src="assets/img/formation/4Powerbi.png" class="tech-logo-indicator" alt="Power BI"> Power BI</div>
+                            <div class="legend-item"><img src="assets/img/formation/sql.png" class="tech-logo-indicator" alt="SQL Básico"> SQL Básico</div>
+                            <div class="legend-item"><img src="assets/img/formation/sql.png" class="tech-logo-indicator" alt="SQL Avanzado"> SQL Avanzado</div>
+                            <div class="legend-item"><img src="assets/img/formation/5Python.png" class="tech-logo-indicator" alt="Python"> Python</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="calendar-weekdays">
+                    <div>Lun</div>
+                    <div>Mar</div>
+                    <div>Mié</div>
+                    <div>Jue</div>
+                    <div>Vie</div>
+                    <div>Sáb</div>
+                </div>
+
+                <div class="calendar-grid" id="calendar-grid">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+
+            <!-- Right Side: Details / Table view -->
+            <div class="details-side-container">
+                <!-- Course Details Card (Active when course selected) -->
+                <div class="info-card" id="course-info-card" style="display: none;">
+                    <div>
+                        <h3 id="info-course-name" style="margin-top: 8px;">Nombre del Curso</h3>
+                        <p id="info-classroom-name" class="font-course-excel" style="font-weight: 700; font-size: 0.85rem; margin-top: 4px; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-chalkboard-teacher"></i> Aula</p>
+                    </div>
+
+                    <div class="info-meta-grid">
+                        <div class="meta-item">
+                            <span class="label">Horario</span>
+                            <span class="value" id="info-horario">-</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="label">Días</span>
+                            <span class="value" id="info-dias">-</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="label">Inicio</span>
+                            <span class="value" id="info-inicio">-</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="label">Sesiones</span>
+                            <span class="value">8 Clases en Vivo</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 style="margin-bottom: 8px; font-weight: 700; font-size: 1rem;"><i class="fas fa-bullhorn text-accent"></i> Copia de Flyer</h4>
+                        <div class="info-flyer-copy">
+                            <ul id="info-copy-flyer" style="list-style: none; padding-left: 0; margin-bottom: 0;">
+                                <!-- Flyer items populated dynamically -->
+                            </ul>
+                        </div>
+                    </div>
+
+                    <a href="#" target="_blank" class="btn btn-whatsapp" id="info-whatsapp-cta" style="margin-top: 10px; width: 100%;">
+                        <i class="fab fa-whatsapp"></i> Inscribirme en WhatsApp
+                    </a>
+                </div>
+
+                <!-- Master Placeholder (Active when viewing consolidated calendar) -->
+                <div class="master-placeholder" id="master-info-placeholder">
+                    <i class="fas fa-map-marked-alt" style="font-size: 3rem; color: var(--accent-color); margin-bottom: 16px;"></i>
+                    <h3>Resumen Master de Cursos</h3>
+                    <p>Estás en el Calendario Master. Selecciona un curso específico en las pestañas superiores para ver su temario sesión por sesión y calcular sus clases específicas.</p>
+                    
+                    <div class="master-table-wrapper">
+                        <table class="master-table">
+                            <thead>
+                                <tr>
+                                    <th>Curso</th>
+                                    <th>Días</th>
+                                    <th>Horario</th>
+                                    <th>Inicio</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="master-table-body">
+                                <!-- Populated dynamically via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Dynamic WhatsApp Checkout Button for Multi-selection -->
+                    <div id="master-whatsapp-cta-container" style="margin-top: 24px; display: none;">
+                        <a href="#" target="_blank" class="btn btn-whatsapp" id="master-whatsapp-cta" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px 20px; font-size: 1.05rem; font-weight: 700; border-radius: 30px;">
+                            <i class="fab fa-whatsapp"></i> Matricularse en Cursos Seleccionados
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Syllabus Accordion (Active when course selected) -->
+        <section class="syllabus-section fade-in" id="course-syllabus-section" style="display: none;">
+            <h3>Syllabus Detallado (8 Clases)</h3>
+            <div class="syllabus-accordion" id="syllabus-accordion-container">
+                <!-- Populated dynamically via JS -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer id="contacto">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <a href="#" class="logo">
+                    <img src="assets/img/logo/logo_claro.png" class="logo-light" alt="Data Academy">
+                    <img src="assets/img/logo/logo_oscuro.png" class="logo-dark" alt="Data Academy">
+                </a>
+                <p>Transformando datos complejos en decisiones estratégicas claras a través de Power BI y Automatizaciones.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Enlaces</h4>
+                <ul>
+                    <li><a href="index.html#inicio">Inicio</a></li>
+                    <li><a href="index.html#proyectos">Proyectos</a></li>
+                    <li><a href="landing-ventas.html">Precios Cursos</a></li>
+                    <li><a href="pages/biografia.html">Sobre Profesores</a></li>
+                </ul>
+            </div>
+            <div class="footer-social">
+                <h4>Conéctate</h4>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Data Academy. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Floating WhatsApp -->
+    <a href="https://api.whatsapp.com/send/?phone=51904882577&text=Hola%2C%20estoy%20interesado%20en%20capacitarme&type=phone_number&app_absent=0"
+        class="whatsapp-float" target="_blank" aria-label="Chat en WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- Scripts -->
+    <script src="assets/js/script.js"></script>
+    <script src="assets/js/landing-cursos.js"></script>
+</body>
+
+</html>
